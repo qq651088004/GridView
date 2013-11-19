@@ -1,4 +1,5 @@
 GridView
 ========
 
-html5+js GridView,for chorme;android;ios;window phone;IE10+;
+use html5+css3+js 
+compatibility:chorme;android;ios;window phone;IE10+;

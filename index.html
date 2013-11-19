@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,user-scalable=no"/>
+    <script src="build/GridView.js"></script>
+    <script src="build/TouchEvent.js"></script>
+    <style>
+        *{
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+            -ms-touch-action:none;
+        }
+        html,body{
+            margin: 0;
+            padding: 0;
+            background: #cccccc;
+        }
+        .wrapper{
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            right: 10px;
+            bottom: 100px;
+            border: solid 1px #de9f9f;
+            overflow: hidden;
+        }
+        footer{
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 100px;
+            bottom: 0;
+            padding: 20px;
+        }
+        footer button{
+            padding: 20px;
+            margin: 10px;
+        }
+        .template{
+            display: none;
+        }
+        .item{
+            -webkit-transition:300ms 0ms ease-out;
+            background: #de8e40;
+            text-align: center;
+            color: #ffffff;
+            -webkit-user-select:none;
+            cursor: default;
+        }
+        .item .del{
+            display: block;
+            height: 15px;
+            text-align: right;
+            width: 100%;
+            background: #de6564;
+            position: absolute;
+            padding: 5px;
+            top: 0;
+            right: 0;
+            font-weight: bolder;
+            color: #ffffff;
+        }
+        .item .index{
+            font-weight: bold;
+            line-height: 150px;
+        }
+        .item[active]{
+            -webkit-transform:scale(1.13,1.13);
+            background: #5159de;
+        }
+    </style>
+</head>
+<body>
+<div class="wrapper"></div>
+<footer>
+    <button class="prev">上一页</button>
+    <button class="next">下一页</button>
+    <div class="tip">当前页:<span id="pageIndex">1</span></div>
+</footer>
+<div class="template">
+    <div class="item">
+        <span class="index"></span>
+        <div class="del">X</div>
+    </div>
+    <div class="item undraggable"></div>
+</div>
+<script>
+    window.onload = function(){
+        var wrapper = document.querySelector(".wrapper");
+        var gridView = new GridView(wrapper,{xSpacing:20,ySpacing:20,itemHoldTimeout:350});
+
+//        gridView.add(document.querySelector(".template .item.undraggable").cloneNode(true),{draggable:false});
+        for(var i=0;i<100;i++){
+            var item = document.querySelector(".template .item").cloneNode(true);
+            item.querySelector(".index").innerHTML = "ITEM" + i;
+            gridView.add(item,{width:150,height:150,overflow:"hidden"});
+            item.querySelector(".del").addEventListener("click",function(e){
+                e.stopPropagation();
+                gridView.remove(e.currentTarget.parentElement);
+            })
+        }
+
+        gridView.bind("tapitem",function(e){
+            e.currentTarget.querySelector(".index").innerHTML = "you taped me before";
+        });
+
+        gridView.page.bind("pagedown",onPageChange);
+        gridView.page.bind("pageup",onPageChange);
+        gridView.page.bind("poppage",onPageChange);
+
+        function onPageChange(){
+            document.querySelector("#pageIndex").innerHTML = gridView.page.currentPageIndex+1;
+        }
+
+        document.querySelector(".prev").addEventListener("click",function(){
+            if(gridView.page.hasPrev())gridView.page.goPrev(300);
+        });
+        document.querySelector(".next").addEventListener("click",function(){
+            if(gridView.page.hasNext())gridView.page.goNext(300);
+        })
+    }
+</script>
+</body>
+</html>
